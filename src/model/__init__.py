@@ -1,1 +1,1 @@
-from src.model.based_architecture import LanguageModel
+from src.model.language_model import LanguageModel

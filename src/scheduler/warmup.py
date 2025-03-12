@@ -9,5 +9,5 @@ class WarmUpScheduler(_LRScheduler):
 
     def get_lr(self):
         step = self.last_epoch + 1
-        lr = self.d_model ** (-0.5) * min(step ** (-0.5), step * self.warmup_steps ** (-1.5))
+        lr = (self.d_model ** (-0.5)) * min(step ** (-0.5), step * (self.warmup_steps ** (-1.5)))
         return [lr for _ in self.optimizer.param_groups]

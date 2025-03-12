@@ -1,5 +1,4 @@
 from datetime import datetime
-import numpy as np
 import pandas as pd
 import wandb
 
@@ -65,12 +64,6 @@ class WandbTracker:
 
     def log_scalar(self, scalar_name, scalar):
         wandb.log({self._object_name(scalar_name): scalar}, step=self.step)
-
-    def log_translation(self, src_texts, trg_texts, translation_texts):
-        table = wandb.Table(columns=["Source", "Target", "Translation"])
-        for src, trg, translation in zip(src_texts, trg_texts, translation_texts):
-            table.add_data(src, trg, translation)
-        wandb.log({"Translation Results": table}, step=self.step)
 
     def log_config(self, path):
         artifact = wandb.Artifact(name="config", type="config")

@@ -1,13 +1,12 @@
 import torch
 from sacrebleu import corpus_bleu
 from torch import nn
-from src.utils.globals import PAD_ID
 
 
 class CrossEntropyLossWrapper(nn.Module):
-    def __init__(self, label_smoothing):
+    def __init__(self, label_smoothing, ignore_index):
         super().__init__()
-        self.loss = nn.CrossEntropyLoss(label_smoothing=label_smoothing, ignore_index=PAD_ID)
+        self.loss = nn.CrossEntropyLoss(label_smoothing=label_smoothing, ignore_index=ignore_index)
         self.name = "loss"
 
     def forward(self, logits, trg_text, **batch):
@@ -30,19 +29,3 @@ class GradNormMetric(BaseMetric):
             norm_type,
         )
         return total_norm.item()
-
-
-class BLEUMetric(BaseMetric):
-    def __init__(self, name, is_global, **config):
-        super().__init__(name, is_global, **config)
-        self.translations = []
-        self.references = []
-
-    def __call__(self, decoded_trg_text, decoded_translation_text, **batch):
-        self.references.append(decoded_trg_text)
-        self.translations.extend(decoded_translation_text)
-        return 0
-
-    def get_score(self):
-        bleu_score = corpus_bleu(self.translations, self.references)
-        return bleu_score.score

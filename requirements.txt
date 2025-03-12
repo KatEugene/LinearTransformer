@@ -1,4 +1,8 @@
-torch==2.3.0
-torchtext==0.18.0
+torch==2.5.0
+transformers==4.39.3
+datasets==3.3.2
+numpy==1.26.0
+
 hydra-core
-sacrebleu
+tqdm
+pandas

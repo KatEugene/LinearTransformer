@@ -120,12 +120,6 @@ class Trainer:
         return not_improved_count
 
     def _log_batch(self, batch, metric_tracker, epoch, logging_global=False):
-        if logging_global:
-            src_texts = batch["decoded_src_text"]
-            trg_texts = batch["decoded_trg_text"]
-            translation_texts = batch["decoded_translation_text"]
-            self.wandb_tracker.log_translation(src_texts, trg_texts, translation_texts)
-
         banned_names = self._get_banned_metrics(epoch)
         for metric_name in metric_tracker.keys():
             if metric_name not in banned_names:
@@ -162,12 +156,9 @@ class Trainer:
         if self.mode == 'train':
             self.optimizer.zero_grad()
 
-        trg_text = batch['trg_text']
-        batch['trg_text'] = trg_text[:, :-1]
         outputs = self.model(**batch)
         batch.update(outputs)
 
-        batch['trg_text'] = trg_text[:, 1:]
         batch['logits'] = batch['logits'].transpose(1, 2)
         loss = self.criterion(**batch)
         batch.update(loss)

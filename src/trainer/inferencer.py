@@ -1,7 +1,6 @@
 import torch
 from tqdm.auto import tqdm
 
-from src.metrics import MetricTracker
 from src.utils.globals import ROOT_PATH
 
 
@@ -11,32 +10,29 @@ class Inferencer:
         self.device = device
         self.model = model
         self.test_dataloder = test_dataloder
-        self.save_dir = ROOT_PATH / config.inferencer.save_dir
-        self.save_dir.mkdir(exist_ok=True, parents=True)
-        self.save_path = self.save_dir / "test1.de-en.en"
+        save_dir = ROOT_PATH / config.inferencer.save_dir
+        save_dir.mkdir(exist_ok=True, parents=True)
+        self.save_path = save_dir / "inference_result"
         self.transforms = transforms
-        self.from_pretrained = config.inferencer.from_pretrained
-        if self.from_pretrained == 'default':
-            self.pretrained_path = ROOT_PATH / config.trainer.checkpoint_dir / config.wandb_tracker.run_name / "model_best.pth"
-        else:
-            self.pretrained_path = ROOT_PATH / self.from_pretrained
-        self._from_pretrained(self.pretrained_path)
+
+        pretrained_path = ROOT_PATH / config.inferencer.from_pretrained
+        self._from_pretrained(pretrained_path)
 
     def inference(self):
         self.model.eval()
-        self.save_file = self.save_path.open(mode='w')
+        save_file = self.save_path.open(mode='w')
         with torch.no_grad():
             for _, batch in tqdm(enumerate(self.test_dataloder), desc="test", total=len(self.test_dataloder)):
                 self.process_batch(batch)
-                for line in batch['decoded_translation_text']:
-                    self.save_file.write(line)
-                    self.save_file.write('\n')
+                for line in batch['generated_text']:
+                    save_file.write(line)
+                    save_file.write('\n')
 
     def process_batch(self, batch):
         self._move_batch_to_device(batch)
         self._transform_batch(batch)
-        decoded_texts = self.model.inference(**batch)
-        batch.update(decoded_texts)
+        generated_texts = self.model.inference(**batch)
+        batch.update(generated_texts)
 
     def _from_pretrained(self, pretrained_path):
         checkpoint = torch.load(pretrained_path, self.device)
