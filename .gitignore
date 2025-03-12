@@ -1,0 +1,11 @@
+a.py
+test.ipynb
+__pycache__
+outputs
+checkpoints
+submission
+kaggle_submit
+init_kaggle_submit.py
+wandb
+*.ipynb
+*.sh

@@ -1,0 +1,73 @@
+globals:
+  seed: 42
+
+model:
+  _target_: src.model.LanguageModel
+  input_dim: ${dataloader.max_vocab_size}
+  output_dim: ${dataloader.max_vocab_size}
+  d_model: 512
+  nhead: 8
+  num_encoder_layers: 6
+  num_decoder_layers: 6
+  dim_feedforward: 2048
+  dropout: 0.1
+  max_seq_len: ${dataloader.max_seq_len}
+  max_generated_length: 300
+
+loss_function:
+  _target_: src.metrics.CrossEntropyLossWrapper
+  label_smoothing: 0.0
+
+metrics:
+  train:
+    - _target_: src.metrics.GradNormMetric
+      is_global: False
+      name: 'grad_norm'
+
+  inference:
+    - _target_: src.metrics.BLEUMetric
+      is_global: True
+      name: 'bleu'
+
+optimizer:
+  _target_: torch.optim.Adam
+  lr: 3e-4
+  betas: [0.9, 0.98]
+  eps: 1e-9
+
+dataloader:
+  batch_size: 64
+  max_seq_len: 150
+  train_size: 50
+  max_vocab_size: 16000
+
+lr_scheduler:
+  _target_: src.scheduler.WarmUpScheduler
+  d_model: ${model.d_model}
+  warmup_steps: 15
+
+wandb_tracker:
+  _target_: src.metrics.WandbTracker
+  project_name: 'BHW-2 DL 2024-2025'
+  run_name: 'baseline'
+  mode: 'disabled'
+  loss_names: ['loss']
+  run_id: null
+
+transforms:
+  train: {}
+  inference: {}
+
+trainer:
+  log_period: 50
+  epoch_period: 5
+  save_period: 5
+  n_epochs: 20
+  resume_from: null
+  early_stop: null
+  to_device: ['src_text', 'trg_text']
+  checkpoint_dir: 'checkpoints'
+
+inferencer:
+  save_dir: 'submission'
+  from_pretrained: 'default'
