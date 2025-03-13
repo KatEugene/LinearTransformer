@@ -46,13 +46,9 @@ def collate_fn(dataset_items: list[dict]):
 def get_dataloaders(config):
     BATCH_SIZE = config.dataloader.batch_size
     MAX_SEQ_LEN = config.dataloader.max_seq_len
-    TRAIN_SIZE = config.dataloader.train_size
 
     train_dataset = load_dataset("allenai/c4", "st", split="train")
     valid_dataset = load_dataset("allenai/c4", "st", split="validation")
-
-    train_dataset = train_dataset.select(range(TRAIN_SIZE))
-    valid_dataset = valid_dataset.select(range(TRAIN_SIZE))
 
     tokenizer = AutoTokenizer.from_pretrained("gpt2")
     tokenizer.add_special_tokens({

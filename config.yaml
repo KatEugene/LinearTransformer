@@ -32,7 +32,6 @@ optimizer:
 dataloader:
   batch_size: 2
   max_seq_len: 512
-  train_size: 3
   max_vocab_size: 16000
 
 lr_scheduler:
