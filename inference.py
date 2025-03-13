@@ -13,7 +13,7 @@ def inference(config):
     device = "cuda" if torch.cuda.is_available() else "cpu"
     dataloaders, tokenizer = get_dataloaders(config)
     test_dataloader = dataloaders["valid"]
-    model = instantiate(config.model, vocab_size=tokenizer.vocab_size, tokenizer=tokenizer).to(device)
+    model = instantiate(config.model, vocab_size=tokenizer.vocab_size+3, tokenizer=tokenizer).to(device)
     transforms = instantiate(config.transforms.inference)
 
     inferencer = Inferencer(

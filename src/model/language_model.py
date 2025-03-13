@@ -26,7 +26,7 @@ class LanguageModel(nn.Module):
     def __init__(self, vocab_size, d_model, num_heads, feature_dim, window_size, num_layers, max_seq_len, dropout, tokenizer):
         super().__init__()
         self.embedding = nn.Embedding(vocab_size, d_model)
-        self.positional_encoder = PositionalEncoder(max_seq_len, d_model, dropout)
+        self.positional_encoder = PositionalEncoder(max_seq_len * 2, d_model, dropout)
         self.layers = nn.ModuleList([Based(d_model, num_heads, feature_dim, window_size) for _ in range(num_layers)])
         self.fc_out = nn.Linear(d_model, vocab_size)
         self.dropout = nn.Dropout(dropout)
@@ -44,8 +44,9 @@ class LanguageModel(nn.Module):
     @torch.inference_mode()
     def inference(self, input_ids, attention_mask, max_length=50):
         for _ in range(max_length):
-            logits = self(input_ids, attention_mask)
+            logits = self(input_ids, attention_mask)['logits']
             next_token = logits[:, -1, :].argmax(dim=-1)
             input_ids = torch.cat([input_ids, next_token.unsqueeze(-1)], dim=-1)
             attention_mask = torch.cat([attention_mask, torch.ones_like(next_token.unsqueeze(-1))], dim=-1)
-        return {"generated_texts": input_ids}
+        decoded_text = self.tokenizer.decode(input_ids.squeeze(), skip_special_tokens=True)
+        return {"generated_texts": decoded_text}

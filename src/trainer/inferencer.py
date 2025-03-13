@@ -15,7 +15,7 @@ class Inferencer:
         self.save_path = save_dir / "inference_result"
         self.transforms = transforms
 
-        pretrained_path = ROOT_PATH / config.inferencer.from_pretrained
+        pretrained_path = ROOT_PATH / config.inferencer.pretrained_path
         self._from_pretrained(pretrained_path)
 
     def inference(self):
@@ -24,7 +24,7 @@ class Inferencer:
         with torch.no_grad():
             for _, batch in tqdm(enumerate(self.test_dataloder), desc="test", total=len(self.test_dataloder)):
                 self.process_batch(batch)
-                for line in batch['generated_text']:
+                for line in batch['generated_texts']:
                     save_file.write(line)
                     save_file.write('\n')
 

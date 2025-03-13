@@ -7,3 +7,5 @@ init_kaggle_submit.py
 wandb
 *.ipynb
 *.sh
+data
+result
