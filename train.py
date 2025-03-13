@@ -14,7 +14,7 @@ def train(config):
     set_random_seed(config.globals.seed)
     device = "cuda" if torch.cuda.is_available() else "cpu"
     dataloaders, tokenizer = get_dataloaders(config)
-    model = instantiate(config.model, vocab_size=tokenizer.vocab_size, tokenizer=tokenizer).to(device)
+    model = instantiate(config.model, vocab_size=tokenizer.vocab_size+3, tokenizer=tokenizer).to(device)
     criterion = instantiate(config.loss_function, ignore_index=tokenizer.pad_token_id)
     metrics = instantiate(config.metrics)
     optimizer = instantiate(config.optimizer, params=model.parameters())

@@ -9,8 +9,8 @@ class CrossEntropyLossWrapper(nn.Module):
         self.loss = nn.CrossEntropyLoss(label_smoothing=label_smoothing, ignore_index=ignore_index)
         self.name = "loss"
 
-    def forward(self, logits, trg_text, **batch):
-        return {"loss": self.loss(logits, trg_text)}
+    def forward(self, logits, output_ids, **batch):
+        return {"loss": self.loss(logits, output_ids)}
 
 
 class BaseMetric:

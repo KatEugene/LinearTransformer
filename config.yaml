@@ -6,7 +6,7 @@ model:
   d_model: 512
   num_heads: 8
   feature_dim: 64
-  window_size: 128,
+  window_size: 64
   num_layers: 6
   max_seq_len: ${dataloader.max_seq_len}
   dropout: 0.1

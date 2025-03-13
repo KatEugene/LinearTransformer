@@ -61,7 +61,6 @@ def get_dataloaders(config):
         "eos_token": EOS_TOKEN,
         "unk_token": UNK_TOKEN,
     })
-    tokenizer.pad_token_id = 0
 
     train_dataset = C4Dataset(train_dataset, tokenizer, MAX_SEQ_LEN)
     valid_dataset = C4Dataset(valid_dataset, tokenizer, MAX_SEQ_LEN)

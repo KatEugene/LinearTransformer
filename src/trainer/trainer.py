@@ -159,7 +159,8 @@ class Trainer:
         outputs = self.model(**batch)
         batch.update(outputs)
 
-        batch['logits'] = batch['logits'].transpose(1, 2)
+        batch['logits'] = batch['logits'][:, :-1].transpose(1, 2)
+        batch['output_ids'] = batch['input_ids'][:, 1:]
         loss = self.criterion(**batch)
         batch.update(loss)
 
